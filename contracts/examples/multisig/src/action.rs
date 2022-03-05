@@ -16,6 +16,9 @@ pub struct CallActionData<M: ManagedTypeApi> {
 #[derive(NestedEncode, NestedDecode, TopEncode, TopDecode, TypeAbi)]
 pub struct VotePolicy<M: ManagedTypeApi> {
     pub governance_token: Option<TokenIdentifier<M>>,
+    /// Minimum number required for vote to finalize.
+    /// If governance_token is Some - this is the minimum number of tokens required.
+    /// If governance_token is None - this is the minimum number of votes required.
     pub quorum: usize,
 }
 
