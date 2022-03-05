@@ -1,4 +1,7 @@
-use crate::{action::Action, user_role::UserRole};
+use crate::{
+    action::{Action, VotePolicy},
+    user_role::UserRole,
+};
 
 elrond_wasm::imports!();
 
@@ -61,7 +64,7 @@ pub trait MultisigPerformModule: crate::multisig_state::MultisigStateModule {
     /// Returns `true` (`1`) if `getActionValidSignerCount >= getQuorum`.
     #[view(quorumReached)]
     fn quorum_reached(&self, action_id: usize) -> bool {
-        let quorum = self.quorum().get();
+        let quorum = self.vote_policy().get().quorum;
         let valid_signers_count = self.get_action_valid_signer_count(action_id);
         valid_signers_count >= quorum
     }
@@ -106,7 +109,7 @@ pub trait MultisigPerformModule: crate::multisig_state::MultisigStateModule {
 
                 // validation required for the scenario when a board member becomes a proposer
                 require!(
-                    self.quorum().get() <= self.num_board_members().get(),
+                    self.vote_policy().get().quorum <= self.num_board_members().get(),
                     "quorum cannot exceed board size"
                 );
                 OptionalValue::None
@@ -120,7 +123,7 @@ pub trait MultisigPerformModule: crate::multisig_state::MultisigStateModule {
                     "cannot remove all board members and proposers"
                 );
                 require!(
-                    self.quorum().get() <= num_board_members,
+                    self.vote_policy().get().quorum <= num_board_members,
                     "quorum cannot exceed board size"
                 );
                 OptionalValue::None
@@ -130,7 +133,10 @@ pub trait MultisigPerformModule: crate::multisig_state::MultisigStateModule {
                     new_quorum <= self.num_board_members().get(),
                     "quorum cannot exceed board size"
                 );
-                self.quorum().set(new_quorum);
+                self.vote_policy().set(VotePolicy {
+                    governance_token: None,
+                    quorum: new_quorum,
+                });
                 OptionalValue::None
             },
             Action::SendTransferExecute(call_data) => {

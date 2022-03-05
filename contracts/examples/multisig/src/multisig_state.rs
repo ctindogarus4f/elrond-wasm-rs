@@ -1,14 +1,17 @@
-use crate::{action::Action, user_role::UserRole};
+use crate::{
+    action::{Action, VotePolicy},
+    user_role::UserRole,
+};
 
 elrond_wasm::imports!();
 
 /// Contains all events that can be emitted by the contract.
 #[elrond_wasm::module]
 pub trait MultisigStateModule {
-    /// Minimum number of signatures needed to perform any action.
-    #[view(getQuorum)]
-    #[storage_mapper("quorum")]
-    fn quorum(&self) -> SingleValueMapper<usize>;
+    /// Vote policy that is used to perform any action.
+    #[view(getVotePolicy)]
+    #[storage_mapper("votePolicy")]
+    fn vote_policy(&self) -> SingleValueMapper<VotePolicy<Self::Api>>;
 
     #[storage_mapper("user")]
     fn user_mapper(&self) -> UserMapper;

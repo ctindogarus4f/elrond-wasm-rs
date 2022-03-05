@@ -6,7 +6,7 @@ mod multisig_propose;
 mod multisig_state;
 mod user_role;
 
-use action::ActionFullInfo;
+use action::{ActionFullInfo, VotePolicy};
 use user_role::UserRole;
 
 elrond_wasm::imports!();
@@ -34,7 +34,10 @@ pub trait Multisig:
             quorum <= new_num_board_members,
             "quorum cannot exceed board size"
         );
-        self.quorum().set(quorum);
+        self.vote_policy().set(VotePolicy {
+            governance_token: None,
+            quorum,
+        });
     }
 
     /// Allows the contract to receive funds even if it is marked as unpayable in the protocol.

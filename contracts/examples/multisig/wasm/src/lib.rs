@@ -12,7 +12,7 @@ elrond_wasm_node::wasm_endpoints! {
         getActionLastIndex
         getNumBoardMembers
         getNumProposers
-        getQuorum
+        getVotePolicy
         performAction
         proposeAddBoardMember
         proposeAddProposer
