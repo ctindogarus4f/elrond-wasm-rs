@@ -187,6 +187,7 @@ pub trait MultisigPerformModule: crate::multisig_state::MultisigStateModule {
                 );
                 OptionalValue::None
             },
+            Action::ChangeVotePolicy { policy: _ } => OptionalValue::None,
         }
     }
 }

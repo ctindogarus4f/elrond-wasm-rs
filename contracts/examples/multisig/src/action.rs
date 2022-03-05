@@ -1,6 +1,6 @@
 use elrond_wasm::{
     api::ManagedTypeApi,
-    types::{BigUint, CodeMetadata, ManagedAddress, ManagedBuffer, ManagedVec},
+    types::{BigUint, CodeMetadata, ManagedAddress, ManagedBuffer, ManagedVec, TokenIdentifier},
 };
 
 elrond_wasm::derive_imports!();
@@ -11,6 +11,12 @@ pub struct CallActionData<M: ManagedTypeApi> {
     pub egld_amount: BigUint<M>,
     pub endpoint_name: ManagedBuffer<M>,
     pub arguments: ManagedVec<M, ManagedBuffer<M>>,
+}
+
+#[derive(NestedEncode, NestedDecode, TopEncode, TopDecode, TypeAbi)]
+pub struct VotePolicy<M: ManagedTypeApi> {
+    pub governance_token: Option<TokenIdentifier<M>>,
+    pub quorum: usize,
 }
 
 #[derive(NestedEncode, NestedDecode, TopEncode, TopDecode, TypeAbi)]
@@ -34,6 +40,9 @@ pub enum Action<M: ManagedTypeApi> {
         source: ManagedAddress<M>,
         code_metadata: CodeMetadata,
         arguments: ManagedVec<M, ManagedBuffer<M>>,
+    },
+    ChangeVotePolicy {
+        policy: VotePolicy<M>,
     },
 }
 
